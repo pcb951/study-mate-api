@@ -10,5 +10,6 @@ router.route("/login").post(authController.login);
 
 // protected routes
 router.use(authController.protect);
-router.route("/me", userController.me, userController.getUser);
+router.route("/me").get(userController.me, userController.getUser);
+
 module.exports = router;
