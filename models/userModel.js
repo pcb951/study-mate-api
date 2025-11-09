@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide your password!"],
     },
+    role: {
+      type: String,
+      enum: {
+        values: ["student", "tutor", "admin"],
+        message: `{VALUE} is not supported! Please request with student, tutor or admin.`,
+      },
+      default: "student",
+    },
     profileImage: String,
     subject: String,
     studyMode: {
