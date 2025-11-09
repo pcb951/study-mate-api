@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide your password!"],
     },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please provide your password!"],
+    },
     role: {
       type: String,
       enum: {
