@@ -110,6 +110,15 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidateCredential, databaseCredential);
 };
 
+userSchema.methods.isPasswordChanged = function (jwtTimeStamp) {
+  if (this.createAt) {
+    // we get jwt iat in seconds so we convert to seconds
+    const changedTimeStamp = parseInt(this.createAt.getTime() / 1000, 10);
+    return jwtTimeStamp < changedTimeStamp;
+  }
+  return false;
+};
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
