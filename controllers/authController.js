@@ -1,4 +1,5 @@
 require("@dotenvx/dotenvx").config();
+const { promisify } = require("util");
 const User = require("./../models/userModel");
 const jwt = require("jsonwebtoken");
 const catchAsync = require("./../utils/catchAsync");
@@ -61,4 +62,26 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   sendJwtCookies(user, 200, res);
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return next(new AppError("Please login first", 401));
+  }
+
+  const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  const currentUser = await User.findById(decode.id);
+  if (!currentUser) {
+    return next(new AppError("Please Create Account First", 401));
+  }
 });

@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema(
     },
     location: String,
     ratingAverage: { type: Number, default: 0, min: 0, max: 5 },
+    createAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
@@ -88,6 +92,14 @@ userSchema.pre("save", async function (next) {
   const hasPassword = await bcrypt.hash(this.password, salt);
   this.password = hasPassword;
   this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre("save", function (next) {
+  // if any user is created or password is modified then update the password changeAt field
+  const isModified = this.isModified("password") || this.isNew;
+  if (!isModified) return next();
+  this.createAt = Date.now() - 1000;
   next();
 });
 
