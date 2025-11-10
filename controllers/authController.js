@@ -6,6 +6,8 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const firebaseAdmin = require("firebase-admin");
 
+// handel firebase-sdk
+
 const SDK_API_KEY = Buffer.from(
   process.env.FIREBASE_SDK_API_KEY,
   "base64"
@@ -16,6 +18,8 @@ const serviceAccount = JSON.parse(SDK_API_KEY);
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
 });
+
+// handel jwt
 
 const createAccessToken = (user) => {
   return jwt.sign(
@@ -33,6 +37,8 @@ const createRefreshToken = (user) => {
   );
 };
 
+// send jwt cookie and response
+
 function sendJwtCookies(user, statusCode, res) {
   const accessToken = createAccessToken(user);
   const refreshToken = createRefreshToken(user);
@@ -45,7 +51,7 @@ function sendJwtCookies(user, statusCode, res) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    path: "/api/v1/auth/refresh_token",
+    path: "/api/v1/users/refresh_token",
   };
 
   res.cookie("refreshToken", refreshToken, refreshCookieOptions);
@@ -55,6 +61,8 @@ function sendJwtCookies(user, statusCode, res) {
     token: accessToken,
   });
 }
+
+// handel signup
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
@@ -73,6 +81,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   sendJwtCookies(newUser, 201, res);
 });
 
+// handel login
+
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -90,6 +100,8 @@ exports.login = catchAsync(async (req, res, next) => {
 
   sendJwtCookies(user, 200, res);
 });
+
+// make sure user is login
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
@@ -127,6 +139,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+// refresh jwt token after 15 minute
 
 exports.refreshToken = catchAsync(async (req, res, next) => {
   // 1 Get refresh token from HTTP-only cookie
@@ -167,7 +181,7 @@ exports.refreshToken = catchAsync(async (req, res, next) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    path: "/api/v1/auth/refresh_token",
+    path: "/api/v1/users/refresh_token",
     expires: new Date(
       Date.now() +
         parseInt(process.env.REFRESH_JWT_EXPIRES_IN) * 24 * 60 * 60 * 1000
@@ -181,7 +195,7 @@ exports.refreshToken = catchAsync(async (req, res, next) => {
   });
 });
 
-// social login
+// handel social login
 exports.socialLogin = catchAsync(async (req, res, next) => {
   let token;
 
@@ -215,7 +229,7 @@ exports.logout = catchAsync(async (req, res, next) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    path: "/api/v1/auth/refresh_token",
+    path: "/api/v1/users/refresh_token",
     expires: new Date(0), // Set cookie expiry to past date
   };
 
