@@ -6,9 +6,10 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const firebaseAdmin = require("firebase-admin");
 
-const SDK_API_KEY = Buffer.from(process.env.FIREBASE_SDK_API_KEY).toString(
-  "utf-8"
-);
+const SDK_API_KEY = Buffer.from(
+  process.env.FIREBASE_SDK_API_KEY,
+  "base64"
+).toString("utf-8");
 
 const serviceAccount = JSON.parse(SDK_API_KEY);
 
