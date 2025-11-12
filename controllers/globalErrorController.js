@@ -1,9 +1,9 @@
 const AppError = require("../utils/appError");
 
-function handelDuplicateError(err) {
-  const message = `${
-    err.keyValue.name || err.keyValue.email
-  } already have! Please try another!`;
+function handleDuplicateError(err) {
+  const field = Object.keys(err.keyValue)[0];
+  const value = err.keyValue[field];
+  const message = `${field} '${value}' already exists. Please use another value!`;
   return new AppError(message, 400);
 }
 
@@ -44,21 +44,19 @@ const sendProductionError = (err, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
+
   if (process.env.NODE_ENV === "development") {
     sendDevError(err, res);
-  }
+  } else {
+    // handle specific errors first
+    let error = { ...err };
+    error.message = err.message;
 
-  let error = { ...err, name: err.name };
-  if (err.code === 11000) {
-    error = handelDuplicateError(error);
-  }
-  if (error.name === "CastError") {
-    error = handleCastError(error);
-  }
-  if (error.name === "TokenExpiredError" || "JsonWebTokenError") {
-    error = handleJWTerror();
-  }
+    if (err.code === 11000) error = handleDuplicateError(err);
+    if (err.name === "CastError") error = handleCastError(err);
+    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError")
+      error = handleJWTerror();
 
-  // Send safe Production Error
-  sendProductionError(error, res);
+    sendProductionError(error, res);
+  }
 };

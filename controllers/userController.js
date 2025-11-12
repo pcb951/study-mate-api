@@ -8,10 +8,15 @@ exports.me = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllUser = catchAsync(async (req, res, next) => {
-  const users = await User.find();
+  const queryObject = { ...req.query };
+  console.log(queryObject);
 
-  if (!users) {
-    return next(new AppError("No user found with that ID", 404));
+  const query = User.find(queryObject);
+
+  const users = await query;
+
+  if (!users || users.length === 0) {
+    return next(new AppError("No user Found!", 404));
   }
 
   res.status(200).json({
