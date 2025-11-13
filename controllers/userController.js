@@ -82,7 +82,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
       )
     );
   }
-  const id = req.params.id;
+  const id = req.user.id;
   const updates = req.body;
 
   const filterBody = filterObj(
