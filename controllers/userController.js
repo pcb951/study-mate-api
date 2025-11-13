@@ -93,7 +93,8 @@ exports.updateUser = catchAsync(async (req, res, next) => {
     "studyMode",
     "availability",
     "experienceLevel",
-    "location"
+    "location",
+    "ratingAverage"
   );
 
   const updatedUser = await User.findByIdAndUpdate(id, filterBody, {

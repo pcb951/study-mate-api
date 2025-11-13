@@ -140,7 +140,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError("Please Create Account First", 401));
   }
 
-  if (currentUser.tokenVersion !== decoded.tokenVersion) {
+  if (currentUser.tokenVersion !== decode.tokenVersion) {
     return next(new AppError("Please login again.", 401));
   }
 
@@ -234,6 +234,17 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
 
   let user = await User.findOne({ email });
 
+  let user = await User.findOne({ email });
+
+  if (user && user.authProvider !== provider) {
+    return next(
+      new AppError(
+        `This email is already registered using ${user.authProvider}. Please use that login method.`,
+        400
+      )
+    );
+  }
+
   if (!user) {
     user = await User.create({
       name: name || "No Name",
@@ -243,6 +254,7 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
       firebaseUid: uid,
     });
   }
+
 
   sendJwtCookies(user, 200, res);
 });
