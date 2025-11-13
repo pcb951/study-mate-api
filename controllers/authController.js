@@ -85,6 +85,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     image: req.body.image,
+    ratingAverage: req.body.ratingAverage,
     authProvider: "mongodb",
   });
 
@@ -121,7 +122,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization.startsWith("Bearer ")
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
@@ -244,12 +245,14 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
   }
 
   if (!user) {
+    const ratingAverage = Number(Math.random() * 4 + 1).toFixed(1);
     user = await User.create({
       name: name || "No Name",
       email,
       image: picture || "",
       authProvider: provider,
       firebaseUid: uid,
+      ratingAverage,
     });
   }
 

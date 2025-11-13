@@ -13,8 +13,8 @@ router.route("/refresh_token").post(authController.refreshToken);
 
 // protected routes
 router.use(authController.protect);
-router.route("/:id").get(userController.getUser);
 router.route("/me").get(userController.me, userController.getUser);
+router.route("/:id").get(userController.getUser);
 router.route("/updateMe").patch(userController.updateUser);
 router.route("/logout").post(authController.logout);
 
