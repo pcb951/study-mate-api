@@ -12,5 +12,6 @@ router
 router.route("/send-request").post(friendshipController.sendFriendRequest);
 router.route("/accept-request").post(friendshipController.acceptFriendRequest);
 router.route("/unfriend").post(friendshipController.unfriend);
+router.route("/delete-request").post(friendshipController.deleteRequest);
 
 module.exports = router;

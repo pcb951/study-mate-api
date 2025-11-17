@@ -83,9 +83,10 @@ exports.acceptFriendRequest = catchAsync(async (req, res, next) => {
 
   const friendship = await Friendship.findOneAndUpdate(
     {
-      requester: requesterId,
-      recipient: recipientId,
-      status: "pending",
+      $or: [
+        { requester: requesterId, recipient: recipientId, status: "pending" },
+        { requester: recipientId, recipient: requesterId, status: "pending" },
+      ],
     },
     { status: "accepted" },
     { new: true }
@@ -123,14 +124,14 @@ exports.unfriend = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.unfriend = catchAsync(async (req, res, next) => {
+exports.deleteRequest = catchAsync(async (req, res, next) => {
   const requesterId = req.user._id;
   const { recipientId } = req.body;
 
   const friendship = await Friendship.findOneAndDelete({
     $or: [
-      { requester: requesterId, recipient: recipientId, status: "accepted" },
-      { requester: recipientId, recipient: requesterId, status: "accepted" },
+      { requester: requesterId, recipient: recipientId, status: "pending" },
+      { requester: recipientId, recipient: requesterId, status: "pending" },
     ],
   });
 
