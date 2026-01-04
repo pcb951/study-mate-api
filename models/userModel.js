@@ -78,11 +78,15 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    birthdate: {
+      type: String,
+      required: [true, "Please Provide Your Birthdate!"],
+    },
     createAt: {
       type: Date,
       default: Date.now,
     },
-    slug: { type: String, unique: true, index: true },
+    slug: { type: String, index: true },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

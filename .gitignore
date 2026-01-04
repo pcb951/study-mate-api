@@ -10,3 +10,4 @@ build/
 
 firebase*
 .vercel
+.env*.local

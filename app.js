@@ -58,8 +58,8 @@ app.delete("/", (req, res) => {
 });
 
 // routers
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/friendships", friendshipRouter);
+app.use("/api/v2/users", userRouter);
+app.use("/api/v2/friendships", friendshipRouter);
 
 // handel unrecognized routes
 app.all("/*splat", (req, res) => {

@@ -45,6 +45,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     authProvider: "firebase",
   });
 
+  console.log(req.body.name);
+
   if (existingUser) {
     return next(
       new AppError(
@@ -59,8 +61,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    image: req.body.image,
-    ratingAverage: req.body.ratingAverage,
+    birthdate: req.body.birthdate,
     authProvider: "mongodb",
   });
 
