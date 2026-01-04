@@ -67,7 +67,7 @@ const userSchema = new mongoose.Schema(
     experienceLevel: {
       type: String,
       enum: {
-        values: ["beginner", "intermediate", "expert"],
+        values: ["Beginner", "Intermediate", "Expert"],
         message: `{VALUE} is not supported! Please request with beginner, intermediate or advanced.`,
       },
       default: "beginner",

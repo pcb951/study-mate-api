@@ -7,6 +7,22 @@ exports.me = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.getMe = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const user = await User.findById(id);
+
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+});
+
 exports.getAllUser = catchAsync(async (req, res, next) => {
   // 1. Copy req.query
   const queryObj = { ...req.query };
