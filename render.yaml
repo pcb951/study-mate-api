@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: study-mate-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false   # sync=false means you’ll enter value in Render dashboard
+      - key: JWT_SECRET
+        sync: false
+        repo: https://github.com/pcb951/study-mate-api
+        branch: main
+
