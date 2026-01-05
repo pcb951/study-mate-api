@@ -40,6 +40,7 @@ function setJwtToken(user, statusCode, res) {
 // handel signup
 exports.signup = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirm, birthdate } = req.body;
+  console.log(name, email, password, passwordConfirm, birthdate);
 
   if (!password || !passwordConfirm) {
     return next(

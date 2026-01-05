@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema(
         values: ["Beginner", "Intermediate", "Expert"],
         message: `{VALUE} is not supported! Please request with beginner, intermediate or advanced.`,
       },
-      default: "beginner",
+      default: "Beginner",
     },
     location: String,
     ratingAverage: { type: Number, default: 0, min: 0, max: 5 },
@@ -117,11 +117,8 @@ userSchema.pre("save", async function (next) {
   if (this.authProvider !== "mongodb") return next();
   if (!this.isModified("password")) return next();
 
-  // ✅ Hash password first
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
-
-  // ✅ Remove passwordConfirm AFTER validation is done
   this.passwordConfirm = undefined;
   next();
 });
