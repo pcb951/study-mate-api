@@ -113,7 +113,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
     "ratingAverage"
   );
 
-  const updatedUser = await User.findByIdAndUpdate(id, filterBody, {
+  await User.findByIdAndUpdate(id, filterBody, {
     new: true,
     runValidators: true,
   });

@@ -16,7 +16,7 @@ router.route("/:id").get(userController.getUser);
 
 // protected routes
 router.use(authController.protect);
-
 router.route("/updateMe").patch(userController.updateUser);
+router.route("/updatePassword").patch(authController.updatePassword);
 
 module.exports = router;

@@ -172,3 +172,29 @@ exports.socialLogin = catchAsync(async (req, res, next) => {
 
   setJwtToken(user, 200, res);
 });
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const { password, passwordConfirm } = req.body;
+
+  if (!password || !passwordConfirm) {
+    return next(
+      new AppError("Please provide password and passwordConfirm", 400)
+    );
+  }
+
+  if (password !== passwordConfirm) {
+    return next(new AppError("Passwords are not the same", 400));
+  }
+
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+
+  await user.save();
+  setJwtToken(user, 200, res);
+});

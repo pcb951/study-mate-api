@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
       },
       validate: {
         validator: function (val) {
-          // Only run if password is being modified
+          // Runs only on create/save
           return val === this.password;
         },
         message: "Passwords are not the same!",
@@ -82,10 +82,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please Provide Your Birthdate!"],
     },
-    createAt: {
-      type: Date,
-      default: Date.now,
-    },
+    passwordChangedAt: Date,
+
     slug: { type: String, index: true },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
@@ -110,11 +108,7 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.pre("save", async function (next) {
-  const isFirebase =
-    this.authProvider !== "mongodb" && !this.isModified("password");
-  if (isFirebase) {
-    return next();
-  }
+  if (this.authProvider !== "mongodb") return next();
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(12);
   const hasPassword = await bcrypt.hash(this.password, salt);
@@ -125,9 +119,8 @@ userSchema.pre("save", async function (next) {
 
 userSchema.pre("save", function (next) {
   // if any user is created or password is modified then update the password changeAt field
-  const isModified = this.isModified("password") || this.isNew;
-  if (!isModified) return next();
-  this.createAt = Date.now() - 1000;
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
@@ -139,9 +132,12 @@ userSchema.methods.correctPassword = async function (
 };
 
 userSchema.methods.isPasswordChanged = function (jwtTimeStamp) {
-  if (this.createAt) {
+  if (this.passwordChangedAt) {
     // we get jwt iat in seconds so we convert to seconds
-    const changedTimeStamp = parseInt(this.createAt.getTime() / 1000, 10);
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
     return jwtTimeStamp < changedTimeStamp;
   }
   return false;
