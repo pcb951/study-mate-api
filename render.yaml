@@ -8,10 +8,17 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: MONGO_URI
-        sync: false   # sync=false means you’ll enter value in Render dashboard
-      - key: JWT_SECRET
+      - key: ACCESS_JWT_EXPIRES_IN
+        sync: false # sync=false means you’ll enter value in Render dashboard
+      - key: ACCESS_JWT_SECRET
         sync: false
-        repo: https://github.com/pcb951/study-mate-api
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_URL
+        sync: false
+      - key: FIREBASE_SDK_API_KEY
+        sync: false
+      - key: PORT
+        sync: false
+        repo: https://github.com/pcb951/study-mate-api.git
         branch: main
-
